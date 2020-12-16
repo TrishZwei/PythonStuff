@@ -4,6 +4,12 @@
 <h1>Random Joke</h1>
 <p class="setup">{{setup}}</p>
 <p class="punchline">{{punchline}}</p>
-<div class="new-joke buton">Get New Joke</div>
+<!-- 
+no need for more than a button here, I took out the suggested table html because for form data, we don't need more than a submit button to submit the data.
+May not need the id which should be my-form to protect the id from being made a variable in JS by the browser window. But I'm leaving it here as is. not sure why the '' around dot joke are red. I think .joke is not correct, . and / are next to each other and is likely a typo, so I replaced the dot for slash
+ -->
+<form method="GET" id="myForm" action={{url_for('/joke')}} >
+<input type="submit" class="new-joke buton" value="Get New Joke">
+</form>
 
 {% endblock %}
