@@ -2,7 +2,8 @@
 from flask import Flask, render_template
 from flask import request
 import json
-from data import Articles 
+from data import Articles
+import requests
 
 app = Flask(__name__)
 
@@ -28,25 +29,10 @@ def article(id):
 @app.route('/joke', methods=['GET', 'POST'])
 def joke():
 	#variables created as empty strings as we'll be getting back some string data from the url.
-	setup = 'this is the default setup'
-	punchline = 'this is the default punchline'
-	#values should be overwritten below:
-	if request.method == 'POST':
-		url = 'https://official-joke-api.appspot.com/jokes/programming/random'
-		resp = requests.get(url)
-		''' 
-		#this is not working either
-		j_string = resp.json()
-		setup = j_string[0].setup
-		punchline = j_string[0].punchline
-		'''
-
-		'''		
-		#is there more than one item? No... then why the loop?
-		for item in resp.json():
-			setup = item['setup']
-			punchline = item['punchline'] 
-		'''
+	url = 'https://official-joke-api.appspot.com/jokes/programming/random'
+	resp = requests.get(url)
+	setup = resp.json()[0]['setup']
+	punchline = resp.json()[0]['punchline']
 
 	return render_template('joke.html', setup = setup, punchline = punchline)
 
