@@ -1,9 +1,9 @@
-
 from flask import Flask, render_template
 from flask import request
 import json
 from data import Articles
 import requests
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -35,6 +35,41 @@ def joke():
 	punchline = resp.json()[0]['punchline']
 
 	return render_template('joke.html', setup = setup, punchline = punchline)
+
+'''testing api data'''
+@app.route('/traintime', methods=['GET', 'POST'])
+def traintime():
+	#variables created as empty strings as we'll be getting back some string data from the url.
+	station = '120S'
+	url = 'http://mtaapi.herokuapp.com/api?id='+station
+	resp = requests.get(url);
+	times = resp.json()['result']['arrivals']
+	times.sort() #sorts the long list
+	unique_times = [] #creates an empty array to store unique values
+
+	#getting time... can we filter for current time?
+	now = datetime.now()
+	current_time = now.strftime("%H:%M:%S")
+
+	counter = 0; 
+
+	for time in times:
+		#checks to see if the time is already in the unique_times list
+		#gets rid of the 24 hour from the data which does not exist since midnight is 00.
+		if time not in unique_times and not (time[0]+time[1] == '24'):
+			#how to check against the current time to get values of the same hour or greater than...
+			if time >= current_time and counter < 10:
+				unique_times.append(time)
+				counter+=1
+
+	times = unique_times #resets the value of times to the value of unique_times.
+
+
+
+
+	name = resp.json()['result']['name']
+	
+	return render_template('traintime.html', times = times, name=name, current_time = current_time)
 
 
 if __name__ == '__main__':

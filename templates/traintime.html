@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Train Times for {{name}} Station</h1>
+<div>Current Time is: {{current_time}}</div>	
+{% for x in times %}
+<div>{{x}}</div>
+{% endfor %}
+
+
+{% endblock %}
