@@ -1,9 +1,35 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+	<style type="text/css">
+		body{
+	  		color: white;
+		}
+
+		#vanta-test {
+		  position: absolute;
+		  display: block;
+		  min-width: 100%;
+		  min-height: 100vh;
+		  background-color: black;
+		  top: 0;
+		  left: 0;
+		  right: 0;
+		  bottom: 0;
+		  z-index: -1;
+		}
+
+		h1{
+		  color: #45F2E7;
+		  margin-top: 2em; 
+		}
+
+	</style>
+
 	<div class="jumbotron text-center">
-		<h1>Welcome to Flask App</h1>
-		<p class="lead">This application is built on the python flask frame work and is the focus for the "Python Flask from Scratch" You Tube series.</p>
+		<h1>Vanta JS</h1>
+		<p class="lead">This is a test to see how Vanta JS works alongside bootstrap. Apparently we don't need jQuery set in no conflict mode in order for this to work and work with bootstap dropdowns.</p> <p>This application is built on the python flask frame work and is the focus for the "Python Flask from Scratch" You Tube series by Brad Traversy.</p>
+		<div id="vanta-test"></div>
 	</div>
 
 
