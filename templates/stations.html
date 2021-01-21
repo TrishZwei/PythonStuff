@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Stations List</h1>
+<!-- this is to be a list of stations -->
+<ul class="list-group">
+{% for station in stations %}
+	<li class="list-group-item"><a href="traintime/{{station.id}}"> {{station.name}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
