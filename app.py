@@ -1,11 +1,27 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, flash, redirect, url_for, session, logging
 from flask import request
+from flask_mysqldb import MySQL
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from passlib.hash import sha256_crypt 
 import json
 from data import Articles
 import requests
 from datetime import datetime
-
+from dbconfig import dbConfig
 app = Flask(__name__)
+
+creds = dbConfig(); #using git ignore to keep credentials secret
+#print(creds)
+
+#config MySQL
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] =  creds[0] 
+app.config['MYSQL_PASSWORD'] = creds[1] 
+app.config['MYSQL_DB'] = creds[2] 
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor' #sets to dictionary
+
+#init mySQL
+mysql = MySQL(app)
 
 Articles = Articles();
 
@@ -54,7 +70,7 @@ def stations():
 def traintime(id):
 	# if id != '':
 		station = id 
-		url = 'http://mtaapi.herokuapp.com/api?id='+station
+		url = 'http://mtaapi.herokuapp.com/api?id='+station #ex: 120S
 		resp = requests.get(url);
 		times = resp.json()['result']['arrivals']
 		times.sort() #sorts the long list
@@ -79,9 +95,49 @@ def traintime(id):
 
 		name = resp.json()['result']['name']
 		
-		return render_template('traintime.html', times = times, name=name, current_time = current_time)
+		return render_template('traintime.html', times = times, name = name, current_time = current_time)
 #how do I render a different template if there is no id? or tell the user on the page that an id is needed
 
+#need to create a class for each form
+
+class RegisterForm(Form):
+	name = StringField('name', [validators.Length(min=1, max=50)])
+	username = StringField('Username', [validators.Length(min=6, max=20)])
+	email = StringField('Email', [validators.Length(min=6, max=256)])
+	password = PasswordField('Password', [
+		validators.DataRequired(),
+		validators.EqualTo('confirm', message = 'Passwords do not match' )
+	])
+	confirm = PasswordField('Confirm Password')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+	form = RegisterForm(request.form)
+	if request.method == 'POST' and form.validate():
+		print('method post and form is valid')	
+		name = form.name.data
+		email = form.email.data
+		username = form.username.data
+		password = sha256_crypt.hash(str(form.password.data))
+
+		# create cursor
+		cur = mysql.connection.cursor()
+		#write the query
+		cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
+
+		#send to db
+		mysql.connection.commit()
+
+		#close the connection
+		cur.close()
+
+		flash('You are now registered and can log in.', 'success')
+		#redirect(url_for('index'))
+
+
+	return render_template('register.html', form=form)
+
 if __name__ == '__main__':
+	 app.secret_key='secret123'
 	 app.run(); #host and port can be added into parameters
 

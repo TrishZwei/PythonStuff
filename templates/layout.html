@@ -28,11 +28,15 @@
 				transition-duration: 1s;
 				color: rgba(102,51,153,1)
 			}
+			.container{
+				margin: 3em auto 0;
+			}
 	</style>
 </head>
 <body>
 	{% include 'includes/_navbar2.html' %}
 	<div class="container">
+	{% include 'includes/_messages.html' %}
 	{% block body %}{% endblock %}
 	</div>
 	
