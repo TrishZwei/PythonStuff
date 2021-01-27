@@ -211,33 +211,37 @@ def logout():
 	flash('You are now logged out.', 'success')
 	return redirect(url_for('login'))
 
-'''
+
 @app.route('/test', methods=['GET', 'POST'])
 def test():
-	if request.form:
-		#print('method post')	
-		name = request.form.get("name")
-		username = request.form.get("user_name")
-		email = request.form.get("user_email")
-		password = request.form.get("password")
-
-		password = sha256_crypt.hash(str(request.form.get("password"))
-		phone = request.form.get("phone")
-
+	if request.method == 'POST':
+		#get form fields	
+		#db fields on users_ext are:
+		#name, email, username, password, register_date, phone, bio, age, birthday
+		#required fields are: name, email, password, phone
+		name = request.form['name']
+		username = request.form['user_name']
+		email = request.form['user_email']
+		phone = request.form['phone']
+		password = request.form['password']
+		
 		print(name)
 		print(username)
 		print(email)
 		print(password)
+		print(phone)
+
+		password = sha256_crypt.hash(str(password))
 
 		#create cursor
 		cur = mysql.connection.cursor()
-		write the query. the %s are string replacements placeholders for the variables that follow: 
-		cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
+		#write the query. the %s are string replacements placeholders for the variables that follow: 
+		cur.execute("INSERT INTO users_ext(name, email, username, password, phone) VALUES(%s, %s, %s, %s, %s)", (name, email, username, password, phone))
 
-		send to db
+		#send to db
 		mysql.connection.commit()
 
-		close the connection
+		#close the connection
 		cur.close()
 
 		flash('This was successful', 'success')
@@ -245,9 +249,8 @@ def test():
 		#this redirect finally worked
 		return redirect(url_for('index'))
 
+	return render_template('form_test2.html')
 
-	return render_template('form_test2.html', form=form)
-'''
 
 
 
