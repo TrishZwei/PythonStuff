@@ -9,4 +9,113 @@
 	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
+
+<!-- 
+    <h1>Auth User</h1>
+    <form method="POST" ID="authUser" action="" >
+        <table>
+            <tr>
+            	<th>Username</th>
+            </tr>
+            <tr>
+            	<td>
+            		<input type="text" name="txtUsername" size="20" placeholder="User Name" required>
+            	</td>
+            </tr>
+            <tr>
+            	<th>Password</th>
+            </tr>
+            <tr>
+            	<td>
+            		<input type="password" name="txtPwd1" size="20" placeholder="your password">
+            	</td>
+            </tr>
+            <tr>
+            	<th>Repeat Password</th>
+            </tr>
+            <tr>
+            	<td>
+            		<input type="password" name="txtPwd2" size="20" placeholder="confirm password">
+            	</td>
+            </tr>
+            <tr>
+            	<th>Email</th>
+            </tr>
+            <tr>
+            	<td>
+            		<input type="text" name="txtEmail" size="20" placeholder="your_email@example.com">
+            	</td>
+            </tr>
+            <tr>
+            	<th>
+            		<input type="submit" value="Submit">
+            	</th>
+            </tr>
+            <tr>
+            	<td>
+            		<a href="">Log In</a>
+            	</td>
+            </tr>
+            <tr>
+            	<td>
+            		<a href="">Public Page</a>
+            	</td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+    	'use strict';
+    	let pass1 = document.querySelector('[name="txtPwd1"]'),
+    	 	pass2 = document.querySelector('[name="txtPwd2"]'),
+    	 	form = document.querySelector('#authUser');
+
+    	pass2.addEventListener('blur', function(event){
+    		checkPassword(event)
+    	}); //event listener 
+
+    	form.addEventListener('submit', function(event){
+    		checkPassword(event)
+    	});
+
+
+            // Function to check Whether both passwords
+            // is same or not.
+            function checkPassword(event) {
+               let password1 = pass1.value;
+               let password2 = pass2.value;
+               let valid = false;
+                // If password not entered
+                if (password1 == ''){
+                    alert ("Please enter Password");
+                	valid = false;
+                // If confirm password not entered
+                }else if (password2 == ''){
+                    alert ("Please enter confirm password");
+                	valid = false;
+                // If Not same return False.
+                }else if (password1 != password2) {
+                    alert ("Password did not match: Please try again...");
+                    valid = false;
+                    //return false;
+                }
+                // If same return True.
+                else{
+                	//check to see if form is ready to submit
+                	console.log('call function to submit to check if form is ready')
+                  valid = true;
+                }
+                //if validation has failed:
+                if(!valid){
+                	 event.preventDefault();
+                }
+
+
+            }
+        </script> -->
+
+
 {% endblock %}
+
+
+</html>

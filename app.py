@@ -8,10 +8,14 @@ from data import Articles
 import requests
 from datetime import datetime
 from dbconfig import dbConfig
+from dbconfig import secretKey
+from functools import wraps 
+
+
 app = Flask(__name__)
 
-creds = dbConfig(); #using git ignore to keep credentials secret
-#print(creds)
+creds = dbConfig() #using git ignore to keep db credentials secret
+print(secretKey())
 
 #config MySQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -31,8 +35,8 @@ app.debug=True
 def index():
 	return render_template('home.html')
 
-@app.route('/about')
-def about():
+@app.route('/about', methods=['GET', 'POST'])
+def about(): 
 	return render_template('about.html')
 
 @app.route('/articles')
@@ -65,40 +69,42 @@ def stations():
 
 	return render_template('stations.html', stations = stations)
 
+
 '''getting api data on a specific station -- add <string:id> to this like article's above'''
 @app.route('/traintime/<string:id>', methods=['GET', 'POST'])
 def traintime(id):
-	# if id != '':
-		station = id 
-		url = 'http://mtaapi.herokuapp.com/api?id='+station #ex: 120S
-		resp = requests.get(url);
-		times = resp.json()['result']['arrivals']
-		times.sort() #sorts the long list
-		unique_times = [] #creates an empty array to store unique values
+	station = id 
+	url = 'http://mtaapi.herokuapp.com/api?id='+station #ex: 120S
+	resp = requests.get(url);
+	times = resp.json()['result']['arrivals']
+	times.sort() #sorts the long list
+	unique_times = [] #creates an empty array to store unique values
 
-		#getting time... can we filter for current time?
-		now = datetime.now()
-		current_time = now.strftime("%H:%M:%S")
+	#getting time... can we filter for current time?
+	now = datetime.now()
+	current_time = now.strftime("%H:%M:%S")
 
-		counter = 0; 
+	counter = 0; 
 
-		for time in times:
-			#checks to see if the time is already in the unique_times list
-			#gets rid of the 24 hour from the data which does not exist since midnight is 00.
-			if time not in unique_times and not (time[0]+time[1] == '24'):
-				#how to check against the current time to get values of the same hour or greater than...
-				if time >= current_time and counter < 10:
-					unique_times.append(time)
-					counter+=1
+	for time in times:
+		#checks to see if the time is already in the unique_times list
+		#gets rid of the 24 hour from the data which does not exist since midnight is 00.
+		if time not in unique_times and not (time[0]+time[1] == '24'):
+			#how to check against the current time to get values of the same hour or greater than...
+			if time >= current_time and counter < 10:
+				unique_times.append(time)
+				counter+=1
 
-		times = unique_times #resets the value of times to the value of unique_times.
+	times = unique_times #resets the value of times to the value of unique_times.
 
-		name = resp.json()['result']['name']
+	name = resp.json()['result']['name']
+
+	#flash('You need a station id in order to access times.', 'danger')
 		
-		return render_template('traintime.html', times = times, name = name, current_time = current_time)
-#how do I render a different template if there is no id? or tell the user on the page that an id is needed
+	return render_template('traintime.html', times = times, name = name, current_time = current_time)
+	#how do I render a different template if there is no id? or tell the user on the page that an id is needed
 
-#need to create a class for each form
+#need to create a class for each form for the WTForms to work
 
 class RegisterForm(Form):
 	name = StringField('name', [validators.Length(min=1, max=50)])
@@ -113,8 +119,9 @@ class RegisterForm(Form):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 	form = RegisterForm(request.form)
+	#this is a self parsing form.
 	if request.method == 'POST' and form.validate():
-		print('method post and form is valid')	
+		#print('method post and form is valid')	
 		name = form.name.data
 		email = form.email.data
 		username = form.username.data
@@ -122,7 +129,7 @@ def register():
 
 		# create cursor
 		cur = mysql.connection.cursor()
-		#write the query
+		#write the query. the %s are string replacements placeholders for the variables that follow: 
 		cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
 
 		#send to db
@@ -131,13 +138,122 @@ def register():
 		#close the connection
 		cur.close()
 
+		#not sure why this worked the first time and no times after.
 		flash('You are now registered and can log in.', 'success')
-		#redirect(url_for('index'))
 
+		#this redirect is not working either....
+		return redirect(url_for('index'))
 
 	return render_template('register.html', form=form)
 
+#user login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+	if request.method == 'POST':
+		#get form fields
+		username = request.form['username']
+		password_candidate = request.form['password']
+
+		#create cursor
+		cur = mysql.connection.cursor()
+
+		#get user by username
+		result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
+		#by using fetchone, we don't have to say LIMIT 1 in this query
+
+		if result > 0:
+			#get stored hash - fetchone as a method only gets the first match.
+			#this means usernames should be unique
+			data = cur.fetchone()
+			password = data['password']
+
+			#compare passwords
+			if sha256_crypt.verify(password_candidate, password):
+				app.logger.info('password match')
+				#passed
+				session['logged_in'] = True #just like PHP
+				session['username'] = username 
+
+				flash('you are now logged in', 'success')
+				return redirect(url_for('dashboard'))
+			else:
+				app.logger.info('no password match')	
+				error = 'invalid login'
+				return render_template('login.html', error=error)		
+			#close connection
+			cur.close()		
+		else:
+			error = 'Username not found'
+			return render_template('login.html', error=error)		
+
+	return render_template('login.html')
+
+#check if user logged in
+def is_logged_in(f):
+	@wraps(f)
+	def wrap(*args, **kwargs):
+		if 'logged_in' in session:
+			return f(*args, **kwargs)
+		else:
+			flash('Unauthorized, please login', 'danger')
+			return redirect(url_for('login'))
+	return wrap		
+
+@app.route('/dashboard')
+@is_logged_in
+def dashboard():
+	return render_template('dashboard.html')		
+
+
+@app.route('/logout')
+def logout():
+	session.clear()
+	flash('You are now logged out.', 'success')
+	return redirect(url_for('login'))
+
+'''
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+	if request.form:
+		#print('method post')	
+		name = request.form.get("name")
+		username = request.form.get("user_name")
+		email = request.form.get("user_email")
+		password = request.form.get("password")
+
+		password = sha256_crypt.hash(str(request.form.get("password"))
+		phone = request.form.get("phone")
+
+		print(name)
+		print(username)
+		print(email)
+		print(password)
+
+		#create cursor
+		cur = mysql.connection.cursor()
+		write the query. the %s are string replacements placeholders for the variables that follow: 
+		cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
+
+		send to db
+		mysql.connection.commit()
+
+		close the connection
+		cur.close()
+
+		flash('This was successful', 'success')
+
+		#this redirect finally worked
+		return redirect(url_for('index'))
+
+
+	return render_template('form_test2.html', form=form)
+'''
+
+
+
+
+
 if __name__ == '__main__':
-	 app.secret_key='secret123'
+	 app.secret_key = secretKey() #make a better secret key and put this in creds.
 	 app.run(); #host and port can be added into parameters
 

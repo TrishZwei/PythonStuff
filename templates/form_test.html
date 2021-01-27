@@ -1,0 +1,365 @@
+<!DOCTYPE html class="no-js">
+<html>
+<head>
+    <!-- https://codepen.io/asimanov/pen/dPrwqr?editors=0010 -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>I Know Forms</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style type="text/css">
+*,
+*:before,
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  color: #384047;
+}
+
+form {
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background: #f4f7f8;
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+textarea,
+select {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  font-size: 16px;
+  height: auto;
+  margin: 0;
+  outline: 0;
+  padding: 15px;
+  width: 100%;
+  background-color: #e8eeef;
+  color: #8a97a0;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+  margin-bottom: 30px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 0 4px 8px 0;
+}
+
+select {
+  padding: 6px;
+  height: 32px;
+  border-radius: 2px;
+}
+
+button {
+  padding: 19px 39px 18px 39px;
+  color: #FFF;
+  background-color: #4bc970;
+  font-size: 18px;
+  text-align: center;
+  font-style: normal;
+  border-radius: 5px;
+  width: 100%;
+  border: 1px solid #3ac162;
+  border-width: 1px 1px 3px;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1) inset;
+  margin-bottom: 10px;
+}
+
+fieldset {
+  margin-bottom: 30px;
+  border: none;
+}
+
+legend {
+  font-size: 1.4em;
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+label.light {
+  font-weight: 300;
+  display: inline;
+}
+
+#password{
+    margin-bottom: 5px;
+}
+
+.icon::before {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.icon.eye::before{
+  font-family: "fontAwesome";
+  font-weight: 900;
+  content: "\f06e";
+}
+
+.icon.eye-slash::before{
+  font-family: "fontAwesome";
+  font-weight: 900;
+  content: "\f070";
+}
+
+.icon.show{
+    margin: 0 auto 1.8em;
+    cursor: pointer;
+}
+
+.no-js .icon.show{
+  display: none;
+}
+
+.number {
+  background-color: #5fcf80;
+  color: #fff;
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  font-size: 0.8em;
+  margin-right: 4px;
+  line-height: 30px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 100%;
+}
+
+@media screen and (min-width: 480px) {
+  form {
+    max-width: 480px;
+  }
+}
+
+</style>
+</head>
+<body>
+ <!-- 
+  using get method so that the students can see the data being submitted by the form when successful.
+  using JS to add novalidate into the form attribute so that we can use HTML5 validation as a fallback if someone is not allowing JS on their page. 
+ -->
+    
+<form action="#" method="get" id="sign-up">
+  <h1>Sign Up</h1>
+  <fieldset>
+    <!-- made these fields required -->
+    <legend><span class="number">1</span> Your basic info</legend>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="user_name" required placeholder="your name" autofocus>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="user_email" placeholder="you@you.com" required>
+
+    <label for="phone">Phone:</label>
+    <!-- this is an example of the pattern attribute:  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" this could be used to force the user to use the proper format -->
+    <input type="tel" id="phone" name="phone" placeholder="619-555-1212" pattern="(?:\d{1}\s)?\(?(\d{3})\)?-?\s?(\d{3})-?\s?(\d{4})">
+    <!-- same for minlength and maxlength: minlength="8" maxlength="20" we're using JS to do this.-->
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required placeholder="Your password" pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})" >
+    <!-- p@ssW0rd  works. -->
+    <span class="icon eye show"> Show Password</span>
+    <p>Password must be 8-20 characters long and have a mix of upper and lower case characters, one numeric and one special character.</p>
+    <div class="error">
+        <!-- if the user does not fill out the required elements or has something wrong we can tell the user with this information.-->
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="number">2</span> Your profile</legend>
+    <label for="bio">Bio:</label>
+    <textarea id="bio" name="user_bio"></textarea>
+
+    <label for="age">Age</label>
+    <input type="number" name="age" id="age" min="1" max="150" step="1">
+
+    <label for="date">Birthday</label>
+    <input type="date" name="date" id="date">
+
+    <label>Coffee?</label>
+    <input type="radio" id="love" value="love" name="coffee"><label for="love" class="light">Love it</label><br/>
+    <input type="radio" id="dislike" value="dislike" name="coffee"><label for="dislike" class="light">Don't Like</label>
+  </fieldset>
+
+  <label for="job">Job Role</label>
+  <select id="job" name="user_job" required>
+            <option>Please Choose</option>
+            <optgroup label="Web">
+                <option value="frontend_developer">Front-End Developer</option>
+                <option value="php_developer">PHP Developer</option>
+                <option value="python_developer">Python Developer</option>
+                <option value="rails_developer">Rails Developer</option>
+                <option value="web_designer">Web Designer</option>
+                <option value="wordpress_developer">Wordpress Developer</option>
+            </optgroup>
+            <optgroup label="Mobile">
+                <option value="android_developer">Android Developer</option>
+                <option value="ios_developer">iOS Developer</option>
+                <option value="mobile_designer">Mobile Designer</option>
+            </optgroup>
+            <optgroup label="Business">
+                <option value="business_owner">Business Owner</option>
+                <option value="freelancer">Freelancer</option>
+            </optgroup>
+    </select>
+
+  <label>Interests</label>
+  <input type="checkbox" id="development" value="interest_development" name="user_interest"><label class="light" for="development">Development</label><br>
+  <input type="checkbox" id="design" value="interest_design" name="user_interest"><label class="light" for="design">Design</label><br>
+  <input type="checkbox" id="business" value="interest_business" name="user_interest"><label class="light" for="business">Business</label>
+  
+  <button type="submit">Sign Up</button>
+
+</form>
+
+<script type="text/javascript">
+ // defer has this load last
+        (function(){ 
+        'use strict';
+        /*ensures we are using the most modern JS interpreter available to the browser. 
+        And keeps us on our toes for best practices. use strict is scoped so when it is within a function, 
+        it rules that function and does not interfere with other functions. */
+        
+        document.querySelector('html').classList = 'js';
+        //makes the class in the html element "js" This will only happen if JS is available in the browser.
+
+        //variables at the top ensure the whole program has access to them.
+        //keyword const makes sure we do not overwrite these variables. They cannot be reassigned a value
+        const pass = document.querySelector('input[name="password"]');
+        const show = document.querySelector('span.show');
+        const form = document.querySelector('#sign-up');
+        const errorDiv = document.querySelector('.error'); //TODO: Add element to below form.
+        const phone = document.querySelector('input[type="tel"]');
+        const name = document.querySelector('input[name="user_name"]');
+        const email = document.querySelector('input[type="email"]');
+
+        //these regular expressions get their value from the pattern attribute in their input tags. We use this later when we compare the pattern
+        //do not use the 'g' argument or you get inconsistent results
+        const phPregx = new RegExp(phone.getAttribute('pattern'));
+        const passPregx = new RegExp(pass.getAttribute('pattern'));
+
+        form.setAttribute('novalidate', 'novalidate');
+        //this lets us use JS when JS is available and html 5 validation for when it is not. (like when a user has turned off JS)
+
+        /* #1 problem for people is passwords. Sometimes they fatfinger their phone or keyboard and mis-type their password 
+        and cannot get into their account. This functionality lets them see what they typed. Passwords are just obscured, 
+        not encrypted and not more secure than a regular text box. Good practice is to store them with a hash in a db */
+        
+        //event listener for a password viewing toggle.
+        show.addEventListener('click', function(){
+
+            //the keyword: this is the item that was clicked. this can be used in other context and can be tricky. Use with care.
+            if(this.classList == 'icon eye show'){
+                this.classList = 'icon eye-slash show'; //sets the value of the classes
+                this.textContent = ' Hide Password'
+                pass.setAttribute('type', 'text'); //sets the type of input the password input box is.
+            }else{
+                this.classList = 'icon eye show';
+                pass.setAttribute('type', 'password');
+                this.textContent = ' Show Password';
+            }
+
+        }) //end addEventListener
+
+        form.addEventListener('submit', function(event){
+
+            /* the event parameter/variable works like a local variable to capture the event object, which has lots of information about the event that occured.
+            By having access to the event obect we can access its properties and methods. */
+    
+            let errors = []; //this is an empty array. it is here to store any error messages we need to output to the page to let the user know he needs to fix.
+            let nameVal = name.value.trim();
+            let emailVal = email.value.trim();
+            let phoneVal = phone.value.trim();
+            let passVal = password.value.trim(); //trim clears whitespace on both sides of entry. " password " becomes "password"
+            //once these have been trimmed reinsert these values into the value attribute:
+            name.value = nameVal;
+            email.value = emailVal;
+            pass.value = passVal;
+            phone.value = phoneVal;
+
+            if(nameVal === '' || nameVal == null){
+                errors.push('Name is required')
+            }
+
+            if(emailVal === '' || emailVal == null){
+                errors.push('email is required')
+            }else{
+                //we know we have a value... let's check to see if it is a good one.
+                let atPos = emailVal.indexOf('@');
+                let dotPos = emailVal.lastIndexOf('.');
+                //check to see if that value is valid
+                if(atPos < 1 || (dotPos - atPos < 2)){
+                    errors.push('Please enter a proper email address.')
+                }
+            }
+
+
+            if(phoneVal === '' || phoneVal == null){
+                //nothing was entered into the name field.
+                errors.push('Phone is required. ')
+            }else if(phoneVal.length < 10 ){
+                //less than 10, incomplete
+                errors.push('Your phone number seems incomplete. Please check.'); //push is a method to add items to an array.
+            }else if(phoneVal.length > 12){
+                errors.push('Your phone number seems too long. Please check.')
+            }else if(phPregx.test(phoneVal) === false){
+                errors.push('Please enter a proper US phone number with area code.')
+            }else{
+              console.log('phone all good');
+            }
+
+            if(passVal === '' || passVal == null){
+                //nothing was entered into the name field.
+                errors.push('Password is required. ');
+            }else if(passVal.length < 8 || passVal.length > 20){
+                errors.push('password must be between 8 and 20 characters long.')
+            }else if( passPregx.test(passVal) === false){
+
+                errors.push('Please check your password for the listed requirements. You can check your entered password with the show password link.')
+            }else{
+              console.log('pass all good');
+            }
+
+            if(errors.length > 0){
+                //this means we have at least one error message. So we need to prevent the form from submitting.
+                event.preventDefault(); //this is a method that prevents the event's typical behavior. So in this case we are preventing the page from submitting like it normally would.
+                //now we want to let the user know that they need to fill out stuff before they resubmit.
+                //populate the errorDiv with the content we want:
+                errorDiv.innerHTML = errors.join('<br>');
+
+            }
+    
+        })
+        
+        })(); //end Immediately Invoked Function Expression
+        
+        /* IIFEs are used to keep javascript variables out of the global scope as a best practice to prevent XSS */
+
+</script>
+</body>
+</html>

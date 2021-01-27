@@ -1,7 +1,24 @@
+
+<style type="text/css">
+	div.reviews{
+		color: grey;
+	}
+
+
+
+</style>
+
+row = [name:trish, location: madison square, commentary: ]
+
+<!-- output -->
+{% for row in table %}
+
 <div class="reviews">
 	<p>
-		<span class="name">{{name}}</span><br>
-		<span class="location">{{location}}</span><br>
-		{{commentary}}
+		<span class="name">{{ row['name'] }}</span><br>
+		<span class="location">{{ row['location'] }}</span><br>
+		{{ row['commentary'] }}
 	</p>	
 </div>
+
+{% endfor %}
