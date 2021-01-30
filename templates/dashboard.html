@@ -20,15 +20,15 @@
   		<td>{{article.author}}</td>
   		<td>{{article.create_date}}</td>
   		<td><a href="edit_article/{{article.id}}" class="btn btn-default pull-right">Edit</a></td>
-  		<td><a href="" class="btn btn-danger">Delete</a></td>  		
+  		<td>
+        <form  action="{{url_for('delete_article', id=article.id )}}" method="post">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="Delete" class="btn btn-danger">  
+        </form>
+      </td>  		
   	</tr>
   	{% endfor %}
 
   </table>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<p>You can control the content for articles from here. Add new items, edit current item or delete items that are no longer needed.</p>
 {% endblock %}

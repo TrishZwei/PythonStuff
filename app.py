@@ -275,6 +275,53 @@ def add_article():
 		return redirect(url_for('dashboard'))
 	return render_template('add_article.html', form=form)	
 
+@app.route('/edit_article/<string:id>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_article(id):
+	#create cursor
+	cur = mysql.connection.cursor()
+
+	#get article by id
+	result = cur.execute("SELECT * FROM articles where id = %s", [id])
+
+	article = cur.fetchone()
+
+	form = ArticleForm(request.form)
+	
+	#populate article form fields:
+	form.title.data = article['title']
+	form.body.data = article['body']
+
+
+
+	if request.method == 'POST' and form.validate():
+		title = request.form['title']
+		body = request.form['body']
+
+		cur = mysql.connection.cursor()
+
+		cur.execute("UPDATE articles SET title=%s, body=%s WHERE id = %s", (title, body, [id]))
+		mysql.connection.commit()
+		cur.close()
+
+		flash('Article Updated', 'success')
+
+		return redirect(url_for('dashboard'))
+	return render_template('edit_article.html', form=form)
+
+@app.route('/delete_article/<string:id>', methods=['POST'])
+@is_logged_in
+def delete_article(id):
+	cur = mysql.connection.cursor()
+	cur.execute("DELETE FROM articles WHERE id = %s", [id] )
+	mysql.connection.commit()
+	cur.close()
+	flash('Article Deleted', 'success')
+
+	return redirect(url_for('dashboard'))
+
+
+
 
 #################### me testing my learning ######################
 @app.route('/test', methods=['GET', 'POST'])
