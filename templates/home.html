@@ -26,11 +26,37 @@
 
 	</style>
 
-	<div class="jumbotron text-center">
-		<h1>Vanta JS</h1>
-		<p class="lead">This is a test to see how Vanta JS works alongside bootstrap. Apparently we don't need jQuery set in no conflict mode in order for this to work and work with bootstap dropdowns.</p> <p>This application is built on the python flask frame work and is the focus for the "Python Flask from Scratch" You Tube series by Brad Traversy.</p>
+	<div class="jumbotron">
+		<h1 class="text-center">Vanta JS</h1>
+		<p class="lead">This is a test to see how Vanta JS works alongside bootstrap. Apparently we don't need jQuery set in no conflict mode in order for this to work and work with bootstap dropdowns.</p> 
+		<p>This application is built on the python flask frame work and is the focus for the "Python Flask from Scratch" You Tube series by Brad Traversy.</p>
+		<p>There are additional items that I experimented on as well in order to further facilitate my learning.</p>
+		<p class="text-center">
+		{% if session.logged_in == NULL %}
+			<a href="/register" class="btn btn-lg btn-primary">Register</a>
+			<a href="/login" class="btn btn-lg btn-light">Login</a>
+		{% else: %}	
+			<a href="/dashboard" class="btn btn-lg btn-success">Go To Dashboard</a>
+		{% endif %}
+		</p>
 		<div id="vanta-test"></div>
 	</div>
 
+<!-- wanted to be able to dynamically load this in via the layout.html to include only when home.html was loaded, but I guess this will do. -->	
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/tengbao/vanta@master/vendor/three.r119.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/tengbao/vanta@master/dist/vanta.net.min.js"></script>
+<script type="text/javascript">
+VANTA.NET({
+  el: "#vanta-test",
+  mouseControls: true,
+  touchControls: true,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  scale: 1.00,
+  scaleMobile: 1.00,
+  color: 0x45f2e7
+})	
+</script>
 
 {% endblock %}
